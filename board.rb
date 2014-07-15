@@ -10,8 +10,8 @@ class Board
 
   attr_reader :grid
 
-  def initialize
-    @grid = generate_grid
+  def initialize(grid = nil)
+    @grid ||= generate_grid
   end
 
   def [](pos)
@@ -39,6 +39,16 @@ class Board
     enemy_pieces = pieces.select { |piece| piece.color != color }
 
     enemy_pieces.any? { |piece| piece.valid_moves.include? (king_pos) }
+  end
+
+  def dup
+    new_grid = @grid.map do |row|
+      row.map do |piece|
+        piece.nil? ? nil : piece.dup
+      end
+    end
+
+    Board.new(new_grid)
   end
 
   private

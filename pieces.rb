@@ -7,6 +7,11 @@ class Piece
 
   def move(target)
     return nil unless valid_move?(target)
+
+    board[@position] = nil
+    board[target] = self
+
+    @position = target
   end
 
   def inspect
@@ -18,9 +23,11 @@ class Piece
   end
 
   def puts_in_check?(target)
+    new_board = @board.dup
 
+    new_board[pos].move(target)
+    new_board.in_check?(@color)
   end
-
 end
 
 class SlidingPiece < Piece
