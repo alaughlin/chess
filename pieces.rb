@@ -88,17 +88,29 @@ class Queen < SlidingPiece
   def valid_move?(target)
     super(target) && (straight_move?(target) || diagonal_move?(target))
   end
+
+  def render
+    @color == :black ? "♛" : "♕"
+  end
 end
 
 class Bishop < SlidingPiece
   def valid_move?(target)
     super(target) && diagonal_move?(target)
   end
+
+  def render
+    @color == :black ? "♝" : "♗"
+  end
 end
 
 class Rook < SlidingPiece
   def valid_move?(target)
     super(target) && straight_move?(target)
+  end
+
+  def render
+    @color == :black ? "♜" : "♖"
   end
 end
 
@@ -110,6 +122,10 @@ class King < SteppingPiece
   def king_like_move?(target)
     offsets = [ target[0] - @position[0], target[1] - @position[1] ]
     offsets.all? { |offset| offset.abs <= 1 }
+  end
+
+  def render
+    @color == :black ? "♚" : "♔"
   end
 end
 
@@ -126,8 +142,51 @@ class Knight < SteppingPiece
     offsets = [ target[0] - @position[0], target[1] - @position[1] ]
     DELTAS.include?(offsets)
   end
+
+  def render
+    @color == :black ? "♞" : "♘"
+  end
 end
 
-class Pawn < SteppingPiece # ?? or just Piece?
+class Pawn < SlidingPiece # ?? or just Piece?
+  def valid_move?(target)
+    super(target) && pawn_like_move?(target)
+  end
 
+  def pawn_like_move?(target)
+    valid_moves = []
+
+    # allows pawns to move forward into empty positions
+    valid_moves << target if @board[target].nil?
+
+    if @color == :black
+      # allows pawns to move diagonally if there's an enemy present
+      diag1 = [@position[0] + 1, @position[1] + 1]
+      diag2 = [@position[0] + 1, @position[1] - 1]
+      valid_moves << diag1 unless @board[diag1].nil? || @board[diag1].color == :black
+      valid_moves << diag2 unless @board[diag1].nil? || @board[diag1].color == :black
+
+      # allows pawns to move two squares if in starting row and if empty
+      two_squares_down = [@position[0] + 2, @position[1]]
+      if @position[0] == 1 && @board[two_squares_down].nil?
+        valid_moves << two_squares_down
+      end
+    elsif @color == :white
+      diag1 = [@position[0] - 1, @position[1] + 1]
+      diag2 = [@position[0] - 1, @position[1] - 1]
+      valid_moves << diag1 unless @board[diag1].nil? || @board[diag1].color == :white
+      valid_moves << diag2 unless @board[diag1].nil? || @board[diag1].color == :white
+
+      two_squares_up = [@position[0] - 2, @position[1]]
+      if @position[0] == 6 && @board[two_squares_up].nil?
+        valid_moves << two_squares_up
+      end
+    end
+
+    valid_moves.include?(target)
+  end
+
+  def render
+    @color == :black ? "♟" : "♙"
+  end
 end
