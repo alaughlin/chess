@@ -1,5 +1,11 @@
 require './pieces.rb'
 
+class MissingPieceError < RuntimeError
+end
+
+class InvalidMoveError < RuntimeError
+end
+
 class Board
 
   attr_reader :grid
@@ -13,8 +19,15 @@ class Board
     @grid[x][y]
   end
 
-  def move(start, target)
-
+  def move(start, target) # gets valid coords from game
+    begin
+      raise MissingPieceError if self[start].nil?
+      raise InvalidMoveError unless self[start].valid_moves.include?(target)
+    rescue MissingPieceError
+      puts "No piece at start position!"
+    rescue InvalidMoveError
+      puts "Can't move there!"
+    end
   end
 
   def in_check?(color)
@@ -24,6 +37,7 @@ class Board
     king_pos = king.position
 
     enemy_pieces = pieces.select { |piece| piece.color != color }
+
     enemy_pieces.any? { |piece| piece.valid_moves.include? (king_pos) }
   end
 
