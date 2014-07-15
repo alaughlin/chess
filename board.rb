@@ -48,7 +48,12 @@ class Board
   end
 
   def checkmate?(color)
+    pieces = grid.flatten.reject { |obj| obj.nil? }
     our_pieces = pieces.select { |piece| piece.color == color }
+
+    if in_check?(color) && our_pieces.none? { |piece| piece.valid_moves.count > 0 }
+      puts "Checkmate!"
+    end
   end
 
   def dup
