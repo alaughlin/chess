@@ -44,8 +44,11 @@ class Board
     king_pos = king.position
 
     enemy_pieces = pieces.select { |piece| piece.color != color }
-    p king_pos
     enemy_pieces.any? { |piece| piece.valid_move?(king_pos, self) }
+  end
+
+  def checkmate?(color)
+    our_pieces = pieces.select { |piece| piece.color == color }
   end
 
   def dup

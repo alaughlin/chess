@@ -25,6 +25,20 @@ class Piece
     board[target].nil? || board[target].color != self.color
   end
 
+  def valid_moves
+    moves = []
+    0.upto(7) do |x|
+      0.upto(7) do |y|
+        cur_pos = [x, y]
+        if self.valid_move?(cur_pos, @board) && !self.puts_in_check?(cur_pos)
+          moves << cur_pos
+        end
+      end
+    end
+
+    moves
+  end
+
   def puts_in_check?(target)
     new_board = @board.dup
 
@@ -155,36 +169,41 @@ class Pawn < SlidingPiece # ?? or just Piece?
   end
 
   def pawn_like_move?(target, board)
-    valid_moves = []
+    pawn_moves = []
 
-    # allows pawns to move forward into empty positions
-    valid_moves << target if @board[target].nil?
 
     if @color == :black
+      # allows pawns to move forward one space into empty positions
+      one_square_down = [@position[0] + 1, @position[1]]
+      pawn_moves << one_square_down if board[one_square_down].nil?
+
       # allows pawns to move diagonally if there's an enemy present
       diag1 = [@position[0] + 1, @position[1] + 1]
       diag2 = [@position[0] + 1, @position[1] - 1]
-      valid_moves << diag1 unless board[diag1].nil? || board[diag1].color == :black
-      valid_moves << diag2 unless board[diag1].nil? || board[diag1].color == :black
+      pawn_moves << diag1 unless board[diag1].nil? || board[diag1].color == :black
+      pawn_moves << diag2 unless board[diag1].nil? || board[diag1].color == :black
 
       # allows pawns to move two squares if in starting row and if empty
       two_squares_down = [@position[0] + 2, @position[1]]
       if @position[0] == 1 && board[two_squares_down].nil?
-        valid_moves << two_squares_down
+        pawn_moves << two_squares_down
       end
     elsif @color == :white
+      one_square_up = [@position[0] - 1, @position[1]]
+      pawn_moves << one_square_up if board[one_square_up].nil?
+
       diag1 = [@position[0] - 1, @position[1] + 1]
       diag2 = [@position[0] - 1, @position[1] - 1]
-      valid_moves << diag1 unless board[diag1].nil? || board[diag1].color == :white
-      valid_moves << diag2 unless board[diag1].nil? || board[diag1].color == :white
+      pawn_moves << diag1 unless board[diag1].nil? || board[diag1].color == :white
+      pawn_moves << diag2 unless board[diag1].nil? || board[diag1].color == :white
 
       two_squares_up = [@position[0] - 2, @position[1]]
       if @position[0] == 6 && board[two_squares_up].nil?
-        valid_moves << two_squares_up
+        pawn_moves << two_squares_up
       end
     end
 
-    valid_moves.include?(target)
+    pawn_moves.include?(target)
   end
 
   def render
