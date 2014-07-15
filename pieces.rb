@@ -13,6 +13,14 @@ class Piece
     "#{color.capitalize} #{self.class} at position #{@position}."
   end
 
+  def valid_move?(target)
+    @board[target].color != self.color && puts_in_check? == false
+  end
+
+  def puts_in_check?(target)
+
+  end
+
 end
 
 class SlidingPiece < Piece
@@ -20,7 +28,18 @@ class SlidingPiece < Piece
 
   end
 
+  def valid_move?(target)
+    path_spaces = path(target).map { |pos| @board[pos] }
+    path_spaces.pop!
+
+    # checks to see there's nothing blocking the path
+    # and that the target isn't one of our own pieces
+    super(target) && path_spaces.all? { |space| space.nil? }
+  end
+
+
   def path(target)
+    # returns array with all spaces in path to target
     path_arr = []
 
     temp_space = @position
@@ -58,19 +77,19 @@ end
 
 class Queen < SlidingPiece
   def valid_move?(target)
-    straight_move?(target) || diagonal_move?(target)
+    super(target) && (straight_move?(target) || diagonal_move?(target))
   end
 end
 
 class Bishop < SlidingPiece
   def valid_move?(target)
-    diagonal_move?(target)
+    super(target) && diagonal_move?(target)
   end
 end
 
 class Rook < SlidingPiece
   def valid_move?(target)
-    straight_move?(target)
+    super(target) && straight_move?(target)
   end
 end
 
