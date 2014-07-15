@@ -31,10 +31,6 @@ class Piece
 end
 
 class SlidingPiece < Piece
-  def moves
-
-  end
-
   def valid_move?(target)
     path_spaces = path(target).map { |pos| @board[pos] }
     path_spaces.pop!
@@ -101,10 +97,31 @@ class Rook < SlidingPiece
 end
 
 class King < SteppingPiece
+  def valid_move?(target)
+    super(target) && king_like_move?(target)
+  end
+
+  def king_like_move?(target)
+    offsets = [ target[0] - @position[0], target[1] - @position[1] ]
+    offsets.all? { |offset| offset.abs <= 1 }
+  end
 end
 
 class Knight < SteppingPiece
+  DELTAS = [
+      [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2], [1, 2]
+    ]
+
+  def valid_move?(target)
+    super(target) && knight_like_move?(target)
+  end
+
+  def knight_like_move?(target)
+    offsets = [ target[0] - @position[0], target[1] - @position[1] ]
+    super(target) && DELTAS.include? offsets
+  end
 end
 
 class Pawn < SteppingPiece # ?? or just Piece?
+
 end
