@@ -18,7 +18,13 @@ class Board
   end
 
   def in_check?(color)
+    pieces = grid.flatten
 
+    king = pieces.find { |piece| piece.color == color && piece.is_a? King }
+    king_pos = king.position
+
+    enemy_pieces = pieces.select { |piece| piece.color != color }
+    enemy_pieces.any? { |piece| piece.valid_moves.include? (king_pos) }
   end
 
   private
