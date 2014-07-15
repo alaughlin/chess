@@ -27,8 +27,8 @@ class Piece
 
   def valid_moves
     moves = []
-    0.upto(7) do |x|
-      0.upto(7) do |y|
+    8.times do |x|
+      8.times do |y|
         cur_pos = [x, y]
         if self.valid_move?(cur_pos, @board) && !self.puts_in_check?(cur_pos)
           moves << cur_pos
@@ -44,6 +44,7 @@ class Piece
 
     new_board[@position] = nil
     new_board[target] = self.class.new(target, @color, new_board)
+
     new_board.in_check?(@color)
   end
 end
@@ -51,10 +52,10 @@ end
 class SlidingPiece < Piece
   def valid_move?(target, board)
     path_spaces = path(target).map { |pos| board[pos] }
+    # removes the target from path_spaces so it isn't checked
     path_spaces.pop
 
     # checks to see there's nothing blocking the path
-    # and that the target isn't one of our own pieces
     super(target, board) && path_spaces.all? { |space| space.nil? }
   end
 
@@ -82,19 +83,14 @@ class SlidingPiece < Piece
 
   def straight_move?(target)
     offsets = [ target[0] - @position[0], target[1] - @position[1] ]
+
     offsets.any? { |num| num == 0 }
   end
 
   def diagonal_move?(target)
     offsets = [ target[0] - @position[0], target[1] - @position[1] ]
+
     offsets[0].abs == offsets[1].abs
-  end
-
-end
-
-class SteppingPiece < Piece
-  def valid_move?(target, board)
-    super(target, board)
   end
 
 end
@@ -129,13 +125,14 @@ class Rook < SlidingPiece
   end
 end
 
-class King < SteppingPiece
+class King < Piece
   def valid_move?(target, board)
     super(target, board) && king_like_move?(target)
   end
 
   def king_like_move?(target)
     offsets = [ target[0] - @position[0], target[1] - @position[1] ]
+
     offsets.all? { |offset| offset.abs <= 1 }
   end
 
@@ -144,7 +141,7 @@ class King < SteppingPiece
   end
 end
 
-class Knight < SteppingPiece
+class Knight < Piece
   DELTAS = [
       [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2], [1, 2]
     ]
@@ -155,6 +152,7 @@ class Knight < SteppingPiece
 
   def knight_like_move?(target)
     offsets = [ target[0] - @position[0], target[1] - @position[1] ]
+
     DELTAS.include?(offsets)
   end
 
@@ -163,14 +161,13 @@ class Knight < SteppingPiece
   end
 end
 
-class Pawn < SlidingPiece # ?? or just Piece?
+class Pawn < SlidingPiece
   def valid_move?(target, board)
     super(target, board) && pawn_like_move?(target, board)
   end
 
   def pawn_like_move?(target, board)
     pawn_moves = []
-
 
     if @color == :black
       # allows pawns to move forward one space into empty positions

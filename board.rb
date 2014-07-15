@@ -12,8 +12,6 @@ class Board
 
   def initialize(grid = nil)
     @grid = grid.nil? ? generate_grid : grid
-
-    nil
   end
 
   def [](pos)
@@ -35,25 +33,26 @@ class Board
     rescue InvalidMoveError
       puts "Can't move there!"
     end
+
+    self[start].move(target)
   end
 
   def in_check?(color)
-    pieces = grid.flatten.reject { |obj| obj.nil? }
+    pieces = grid.flatten.compact
 
     king = pieces.find { |piece| piece.color == color && piece.is_a?(King) }
     king_pos = king.position
 
     enemy_pieces = pieces.select { |piece| piece.color != color }
+
     enemy_pieces.any? { |piece| piece.valid_move?(king_pos, self) }
   end
 
   def checkmate?(color)
-    pieces = grid.flatten.reject { |obj| obj.nil? }
+    pieces = grid.flatten.compact
     our_pieces = pieces.select { |piece| piece.color == color }
 
-    if in_check?(color) && our_pieces.none? { |piece| piece.valid_moves.count > 0 }
-      puts "Checkmate!"
-    end
+    in_check?(color) && our_pieces.none? { |piece| piece.valid_moves.count > 0 }
   end
 
   def dup
@@ -121,5 +120,4 @@ class Board
 
     grid
   end
-
 end
