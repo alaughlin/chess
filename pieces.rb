@@ -1,12 +1,16 @@
 class Piece
   attr_reader :color
 
-  def initialize(color, position, board)
+  def initialize(position, color, board)
     @color, @position, @board = color, position, board
   end
 
   def move(target)
     return nil unless valid_move?(target)
+  end
+
+  def inspect
+    "#{color.capitalize} #{self.class}"
   end
 end
 
@@ -54,4 +58,16 @@ end
 
 class Rook < SlidingPiece
   @move_set = [:straight]
+end
+
+class King < SteppingPiece
+
+end
+
+class Knight < SteppingPiece
+
+end
+
+class Pawn < SteppingPiece # ?? or just Piece?
+
 end
