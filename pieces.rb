@@ -7,9 +7,11 @@ class Piece
 
   def move(target)
     return nil unless valid_move?(target)
-
-    board[@position] = nil
-    board[target] = self
+    p "passed valid_move"
+    return nil if puts_in_check?(target)
+    p "passed puts_in_check"
+    @board[@position] = nil
+    @board[target] = self
 
     @position = target
   end
@@ -19,13 +21,14 @@ class Piece
   end
 
   def valid_move?(target)
-    @board[target].color != self.color && puts_in_check? == false
+    @board[target].nil? || @board[target].color != self.color
   end
 
   def puts_in_check?(target)
     new_board = @board.dup
 
-    new_board[pos].move(target)
+    new_board[@position] = nil
+    new_board[target] = self.class.new(target, @color, new_board)
     new_board.in_check?(@color)
   end
 end
@@ -33,7 +36,7 @@ end
 class SlidingPiece < Piece
   def valid_move?(target)
     path_spaces = path(target).map { |pos| @board[pos] }
-    path_spaces.pop!
+    path_spaces.pop
 
     # checks to see there's nothing blocking the path
     # and that the target isn't one of our own pieces
@@ -45,7 +48,7 @@ class SlidingPiece < Piece
     # returns array with all spaces in path to target
     path_arr = []
 
-    temp_space = @position
+    temp_space = @position.dup
     until temp_space == target
       (0..1).each do |i|
         case temp_space[i] <=> target[i]
@@ -75,6 +78,9 @@ class SlidingPiece < Piece
 end
 
 class SteppingPiece < Piece
+  def valid_move?(target)
+    super(target)
+  end
 
 end
 
@@ -118,7 +124,7 @@ class Knight < SteppingPiece
 
   def knight_like_move?(target)
     offsets = [ target[0] - @position[0], target[1] - @position[1] ]
-    super(target) && DELTAS.include? offsets
+    DELTAS.include?(offsets)
   end
 end
 

@@ -19,6 +19,11 @@ class Board
     @grid[x][y]
   end
 
+  def []=(pos, object)
+    x, y = pos
+    @grid[x][y] = object
+  end
+
   def move(start, target) # gets valid coords from game
     begin
       raise MissingPieceError if self[start].nil?
@@ -31,14 +36,13 @@ class Board
   end
 
   def in_check?(color)
-    pieces = grid.flatten
+    pieces = grid.flatten.reject { |obj| obj.nil? }
 
-    king = pieces.find { |piece| piece.color == color && piece.is_a? King }
+    king = pieces.find { |piece| piece.color == color && piece.is_a?(King) }
     king_pos = king.position
 
     enemy_pieces = pieces.select { |piece| piece.color != color }
-
-    enemy_pieces.any? { |piece| piece.valid_moves.include? (king_pos) }
+    enemy_pieces.any? { |piece| piece.valid_move?(king_pos) }
   end
 
   def dup
