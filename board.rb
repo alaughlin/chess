@@ -55,6 +55,18 @@ class Board
     Board.new(new_grid)
   end
 
+  def display
+    @grid.each do |row|
+      row.each do |piece|
+        print piece.nil? ? "_ " : piece.render + " "
+      end
+
+      puts ""
+    end
+
+    nil
+  end
+
   private
 
   def generate_grid
