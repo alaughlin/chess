@@ -1,8 +1,8 @@
 class Piece
   attr_reader :color
 
-  def initialize(color, position)
-    @color, @position = color, position
+  def initialize(color, position, board)
+    @color, @position, @board = color, position, board
   end
 
   def move(target)
@@ -11,28 +11,33 @@ class Piece
 end
 
 class SlidingPiece < Piece
-  def valid_move?(target)
-    valid = false
-
-    target_row, target_col = target
-    current_row, current_col = @position
-
-    offsets = [target_row - current_row, target_col - current_col]
-
-
-
-    if offsets[0].abs == offsets[1].abs && @move_set.include? :diagonal
-      valid = in_path?(target)
-    elsif offsets.any? { |offset| offset == 0 } && @move_set.include? :straight
-      valid = in_path?(target)
-    end
-
+  def moves
 
   end
-
-  def in_path?(target)
-
-  end
+  # def valid_move?(target)
+#     valid = false
+#
+#     target_row, target_col = target
+#     current_row, current_col = @position
+#
+#     offsets = [target_row - current_row, target_col - current_col]
+#
+#
+#
+#     if offsets[0].abs == offsets[1].abs && @move_set.include? :diagonal
+#       valid = in_path?(target)
+#     elsif offsets.any? { |offset| offset == 0 } && @move_set.include? :straight
+#       valid = in_path?(target)
+#     end
+#
+#
+#   end
+#
+#   def in_path?(target)
+#     path_coords = []
+#
+#
+#   end
 end
 
 class SteppingPiece < Piece
