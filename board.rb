@@ -1,4 +1,4 @@
-require './pieces.rb'
+Dir["./pieces/*.rb"].each {|file| require file }
 require 'colorize'
 
 class MissingPieceError < RuntimeError

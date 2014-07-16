@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require './board'
+require_relative 'board.rb'
 
 class InvalidInputError < ArgumentError
 end
