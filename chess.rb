@@ -125,6 +125,8 @@ if __FILE__ == $PROGRAM_NAME
     game.play
   elsif input == 'new'
     Chess.new.play
+  else
+    puts "Didn't choose a valid option, exiting..."
   end
 
 end
