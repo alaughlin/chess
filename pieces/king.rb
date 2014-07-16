@@ -1,6 +1,13 @@
 require_relative 'piece.rb'
 
 class King < Piece
+  attr_accessor :moved
+
+  def initialize(position, color, board)
+    super(position, color, board)
+    @moved = false
+  end
+
   def valid_move?(target, board)
     super(target, board) && (king_like_move?(target) || valid_castle?(target))
   end
@@ -59,35 +66,38 @@ class King < Piece
   end
 
   def valid_castle?(target)
-    # four types of castles, each is unique
-    if @color == :white && target == [7,2]
-      # [7, 0] is the castling rook's position
-      return false if @board[[7,0]].moved?
-      # checking if the rook has a valid move; if true, path is empty
-      return false unless @board[[7,0]].valid_move?([7, 3], @board) && @board[[7,3]].nil?
-      # checking to see that the king doesn't move through or into check.
-      return false if self.puts_in_check?([7,3]) || self.puts_in_check?(target)
+    valid_targets = [[7,2], [7,6], [0,2], [0,6]]
+    return false unless valid_targets.include?(target)
 
-    elsif @color == :white && target == [7,6]
-      return false if @board[[7,7]].moved?
-      return false unless @board[[7,7]].valid_move?([7, 5], @board) && @board[[7,5]].nil?
-      return false if self.puts_in_check?([7,5]) || self.puts_in_check?(target)
+    rook_pos, rook_target = castle_helper(target)
 
-    elsif @color == :black && target == [0,2]
-      return false if @board[[0,0]].moved?
-      return false unless @board[[0,0]].valid_move?([0, 3], @board) && @board[[0,3]].nil?
-      return false if self.puts_in_check?([0,3]) || self.puts_in_check?(target)
-
-    elsif @color == :black && target == [0,6]
-      return false if @board[[0,7]].moved?
-      return false unless @board[[0, 7]].valid_move?([0, 5], @board) && @board[[0,5]].nil?
-      return false if self.puts_in_check?([0,5]) || self.puts_in_check?(target)
-    else
-      # returns false if the target is invalid
+    if rook_pos.nil? || rook_target.nil?
       return false
     end
-    # if ALLLLL that is true, we can castle!
+
+    # castle helper determines our positions depending on target
+    return false if @board[rook_pos].moved?
+    # checking if the rook has a valid move; if true, path is empty
+    return false unless @board[rook_pos].valid_move?(rook_target, @board) &&
+      @board[rook_target].nil?
+    # checking to see that the king doesn't move through or into check.
+    return false if self.puts_in_check?(rook_target) || self.puts_in_check?(target)
+
     true
+  end
+
+  def castle_helper(target)
+    if @color == :white && target == [7,2]
+      [[7,0], [7,3]]
+    elsif @color == :white && target == [7,6]
+      [[7,7], [7,5]]
+    elsif @color == :black && target == [0,2]
+      [[0,0], [0,3]]
+    elsif @color == :black && target == [0,6]
+      [[0,7], [0,5]]
+    else
+      return [nil, nil]
+    end
   end
 
   def render

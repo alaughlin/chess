@@ -3,6 +3,11 @@ require_relative 'sliding_piece.rb'
 class Rook < SlidingPiece
   attr_accessor :moved
 
+  def initialize(position, color, board)
+    super(position, color, board)
+    @moved = false
+  end
+
   def valid_move?(target, board)
     super(target, board) && straight_move?(target)
   end

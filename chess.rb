@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'board.rb'
 require 'yaml'
+require 'debugger'
 
 class InvalidInputError < ArgumentError
 end

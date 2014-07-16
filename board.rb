@@ -32,7 +32,7 @@ class Board
 
   def move_piece(start, target, turn) # gets valid coords from game
     raise MissingPieceError if self[start].nil?
-    raise InvalidMoveError unless self[start].valid_moves.include?(target)
+    raise InvalidMoveError unless self[start].valid_move?(target, self)
     raise WrongColorError if self[start].color != turn
 
     capture_piece(target) unless self[target].nil?
