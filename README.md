@@ -9,8 +9,10 @@ Terminal-based Chess game, done in Ruby.
 + Castling supported
 + Checks for stalemate
 + Pawn Promotion
++ Support for saving/loading a game
++ Captured piece display
 
-## todo:
+##todo:
 + en passant
 + computer a.i.
 + other draw conditions
