@@ -92,13 +92,16 @@ class Chess
         input = gets.chomp.downcase
       end
 
+      raise InvalidInputError unless input.count(",") == 1
+
       input = input.gsub(" ", "").split(',')
       input.each do |pair|
+        raise InvalidInputError unless pair.length == 2
         raise InvalidInputError unless COLS.keys.include?(pair[0])
         raise InvalidInputError unless ROWS.keys.include?(pair[1])
       end
     rescue InvalidInputError
-      puts "Invalid coordinates. Try again!"
+      print "Invalid coordinates. Try again!: "
       retry
     end
 
@@ -117,23 +120,27 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   print "Would you like to play a NEW game or LOAD an old one?: "
-  input = gets.chomp.downcase
+  begin
+    input = gets.chomp.downcase
 
-  if input == 'load'
-    print "What is the name of your save file?: "
-    begin
-      filename = gets.chomp
-      game = YAML.load_file("./saves/#{filename}.yml")
-    rescue
-      print "File doesn't exist! Try again: "
-      retry
+    if input == 'load'
+      print "What is the name of your save file?: "
+      begin
+        filename = gets.chomp
+        game = YAML.load_file("./saves/#{filename}.yml")
+      rescue
+        print "File doesn't exist! Try again: "
+        retry
+      end
+
+      game.play
+    elsif input == 'new'
+      Chess.new.play
+    else
+      raise InvalidInputError
     end
-
-    game.play
-  elsif input == 'new'
-    Chess.new.play
-  else
-    puts "Didn't choose a valid option, exiting..."
+  rescue InvalidInputError
+    print "Please choose a valid option!: "
+    retry
   end
-
 end
