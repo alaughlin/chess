@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 require './board'
 
 class InvalidInputError < ArgumentError
@@ -33,14 +34,23 @@ class Chess
 
   def play
     until @board.checkmate?(:black) || @board.checkmate?(:white)
-      puts "#{@turn.to_s.capitalize}'s turn."
+      puts "\n#{@turn.to_s.capitalize}'s turn.\n\n"
       @board.display
 
-      coords = get_input
+      begin
+        coords = get_input
+        @board.move(coords[0], coords[1], @turn)
+      rescue MissingPieceError
+        puts "No piece at start position!"
+        retry
+      rescue WrongColorError
+        puts "You can't move an opponent's piece!"
+        retry
+      rescue InvalidMoveError
+        puts "Can't move there!"
+        retry
+      end
 
-      @board.move(coords[0], coords[1])
-
-      # shouldn't switch on an invalid move (checked in board class)
       @turn == :white ? @turn = :black : @turn = :white
     end
 
@@ -51,9 +61,9 @@ class Chess
 
   def get_input
      # takes input as two sets of two letters each.
-    puts "#{@turn.to_s} player: input your move. (e.g. A2, A4)"
+    print "\n#{@turn.to_s} player: input your move. (e.g. A2, A4): "
     begin
-      input = gets.chomp.downcase.split(',')
+      input = gets.chomp.downcase.gsub(" ", "").split(',')
       input.each do |pair|
         raise InvalidInputError unless COLS.keys.include?(pair[0])
         raise InvalidInputError unless ROWS.keys.include?(pair[1])
@@ -72,5 +82,7 @@ class Chess
   end
 end
 
-g = Chess.new
-g.play
+if __FILE__ == $PROGRAM_NAME
+  g = Chess.new
+  g.play
+end

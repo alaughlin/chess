@@ -6,6 +6,9 @@ end
 class InvalidMoveError < RuntimeError
 end
 
+class WrongColorError < RuntimeError
+end
+
 class Board
 
   attr_reader :grid
@@ -24,16 +27,10 @@ class Board
     @grid[x][y] = object
   end
 
-  def move(start, target) # gets valid coords from game
-    begin
-      raise MissingPieceError if self[start].nil?
-      raise InvalidMoveError unless self[start].valid_moves.include?(target)
-    rescue MissingPieceError
-      puts "No piece at start position!"
-    rescue InvalidMoveError
-      puts "Can't move there!"
-    end
-
+  def move(start, target, turn) # gets valid coords from game
+    raise MissingPieceError if self[start].nil?
+    raise InvalidMoveError unless self[start].valid_moves.include?(target)
+    raise WrongColorError if self[start].color != turn
     self[start].move(target)
   end
 
