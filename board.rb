@@ -1,4 +1,5 @@
 require './pieces.rb'
+require 'colorize'
 
 class MissingPieceError < RuntimeError
 end
@@ -63,11 +64,15 @@ class Board
   end
 
   def display
-    puts "  A B C D E F G H"
-    @grid.each_with_index do |row, i|
-      print "#{8 - i} "
-      row.each do |piece|
-        print piece.nil? ? "_ " : piece.render + " "
+    puts "   A  B  C  D  E  F  G  H"
+    @grid.each_with_index do |row, x|
+      print "#{8 - x} "
+      row.each_with_index do |piece, y|
+        if piece.nil?
+          print color_square(x, y, "   ")
+        else
+          print color_square(x, y, " #{piece.render} ")
+        end
       end
 
       puts ""
@@ -77,6 +82,15 @@ class Board
   end
 
   private
+  def color_square(row, col, string)
+    if row.even? && col.odd?
+      string.colorize(:background => :cyan)
+    elsif row.odd? && col.even?
+      string.colorize(:background => :cyan)
+    else
+      string.colorize(:background => :light_cyan)
+    end
+  end
 
   def generate_grid
     grid = Array.new(8) { Array.new(8) { nil } }
