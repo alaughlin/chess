@@ -1,6 +1,44 @@
 require_relative 'sliding_piece.rb'
 
+class BadPromotionError < ArgumentError
+end
+
 class Pawn < SlidingPiece
+  def move(target)
+    super(target)
+    # this enables pawn promotion
+    if @color == :white && @position[0] == 0
+      promote
+    elsif @color == :black && @position[0] == 7
+      promote
+    end
+  end
+
+  def promote
+    print "Your pawn is promoted! Please choose a new piece: "
+
+    begin
+      input = gets.chomp.downcase
+
+      case input
+      when "queen"
+        @board[@position] = Queen.new(@position, @color, @board)
+      when "knight"
+        @board[@position] = Knight.new(@position, @color, @board)
+      when "rook"
+        @board[@position] = Rook.new(@position, @color, @board)
+      when "bishop"
+        @board[@position] = Bishop.new(@position, @color, @board)
+      else
+        raise BadPromotionError
+      end
+
+    rescue BadPromotionError
+      print "Please choose a queen, knight, rook, or bishop!: "
+      retry
+    end
+  end
+
   def valid_move?(target, board)
     super(target, board) && pawn_like_move?(target, board)
   end

@@ -10,7 +10,7 @@ class Knight < Piece
   end
 
   def knight_like_move?(target)
-    offsets = [ target[0] - @position[0], target[1] - @position[1] ]
+    offsets = [target[0] - @position[0], target[1] - @position[1]]
 
     DELTAS.include?(offsets)
   end
