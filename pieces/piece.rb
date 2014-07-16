@@ -2,7 +2,7 @@ class Piece
   attr_reader :color, :position
 
   def initialize(position, color, board)
-    @color, @position, @board = color, position, board
+    @color, @position, @board, @captured = color, position, board, false
   end
 
   def move(target)
@@ -48,13 +48,8 @@ class Piece
 
     new_board.in_check?(@color)
   end
+
+  def captured?
+    @captured
+  end
 end
-
-
-
-
-
-
-
-
-

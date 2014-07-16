@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require_relative 'board.rb'
+require 'yaml'
 
 class InvalidInputError < ArgumentError
 end
@@ -34,12 +35,12 @@ class Chess
 
   def play
     until @board.checkmate?(:black) || @board.checkmate?(:white)
-      puts "\n#{@turn.to_s.capitalize}'s turn.\n\n"
+      puts "\n#{@turn.to_s.capitalize}'s turn:\n\n"
 
       if @board.in_check?(:black)
-        puts "Black player is in check!"
+        puts "Black player is in check!\n"
       elsif @board.in_check?(:white)
-        puts "White player is in check!"
+        puts "White player is in check!\n"
       end
 
       @board.display
@@ -68,9 +69,23 @@ class Chess
 
   def get_input
      # takes input as two sets of two letters each.
-    print "\n#{@turn.to_s.capitalize} player: input your move. (e.g. A2, A4): "
+    print "\n#{@turn.to_s.capitalize} player, input your move. (e.g. A2, A4): "
     begin
-      input = gets.chomp.downcase.gsub(" ", "").split(',')
+      input = gets.chomp.downcase
+
+      if input == "save"
+        begin
+          save
+        rescue
+          puts "Something went wrong..."
+        else
+          puts "Game saved!"
+        end
+        print "Input your move: "
+        input = gets.chomp.downcase
+      end
+
+      input = input.gsub(" ", "").split(',')
       input.each do |pair|
         raise InvalidInputError unless COLS.keys.include?(pair[0])
         raise InvalidInputError unless ROWS.keys.include?(pair[1])
@@ -85,9 +100,31 @@ class Chess
 
     [first_pair, second_pair]
   end
+
+  def save
+    print "Enter name of save file: "
+    filename = gets.chomp
+    File.write("./saves/#{filename}.yml", YAML.dump(self))
+  end
 end
 
 if __FILE__ == $PROGRAM_NAME
-  g = Chess.new
-  g.play
+  print "Would you like to play a NEW game or LOAD an old one?: "
+  input = gets.chomp.downcase
+
+  if input == 'load'
+    print "What is the name of your save file?: "
+    begin
+      filename = gets.chomp
+      game = YAML.load_file("./saves/#{filename}.yml")
+    rescue
+      print "File doesn't exist! Try again: "
+      retry
+    end
+
+    game.play
+  elsif input == 'new'
+    Chess.new.play
+  end
+
 end

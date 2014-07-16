@@ -16,6 +16,8 @@ class Board
 
   def initialize(grid = nil)
     @grid = grid.nil? ? generate_grid : grid
+    @captured_blacks = []
+    @captured_whites = []
   end
 
   def [](pos)
@@ -32,6 +34,8 @@ class Board
     raise MissingPieceError if self[start].nil?
     raise InvalidMoveError unless self[start].valid_moves.include?(target)
     raise WrongColorError if self[start].color != turn
+
+    capture_piece(target) unless self[target].nil?
 
     self[start].move(target)
   end
@@ -77,11 +81,22 @@ class Board
         end
       end
 
+      if x == 0
+        print "   " + @captured_whites.map { |piece| piece.render }.join(" ")
+      elsif x == 7
+        print "   " + @captured_blacks.map { |piece| piece.render }.join(" ")
+      end
+
       puts ""
     end
   end
 
   private
+
+  def capture_piece(target)
+    @captured_blacks << self[target] if self[target].color == :black
+    @captured_whites << self[target] if self[target].color == :white
+  end
 
   def color_square(row, col, string)
     if (row.even? && col.odd?) || (row.odd? && col.even?)
