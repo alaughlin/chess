@@ -8,7 +8,7 @@ class Piece
 
   def move(target)
     return nil unless valid_move?(target, @board)
-    return nil if puts_in_check?(target)
+    raise InvalidMoveError if puts_in_check?(target)
     @board[@position] = nil
     @board[target] = self
 
