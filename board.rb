@@ -66,7 +66,9 @@ class Board
   end
 
   def display
-    @grid.each do |row|
+    puts "  A B C D E F G H"
+    @grid.each_with_index do |row, i|
+      print "#{8 - i} "
       row.each do |piece|
         print piece.nil? ? "_ " : piece.render + " "
       end
