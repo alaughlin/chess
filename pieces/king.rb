@@ -33,36 +33,18 @@ class King < Piece
   end
 
   def castle(target)
+    rook_pos, rook_target = castle_helper(target)
+
     @board[@position] = nil
     @board[target] = self
     @position = target
     @moved = true
 
-    if @color == :white && target == [7,2]
-      rook = @board[[7, 0]]
-      @board[[7,0]] = nil
-      @board[[7,3]] = rook
-      rook.position = [7, 3]
-      rook.moved = true
-    elsif @color == :white && target == [7,6]
-      rook = @board[[7, 7]]
-      @board[[7,7]] = nil
-      @board[[7,5]] = rook
-      rook.position = [7, 5]
-      rook.moved = true
-    elsif @color == :black && target == [0,2]
-      rook = @board[[0, 0]]
-      @board[[0,0]] = nil
-      @board[[0,3]] = rook
-      rook.position = [0, 3]
-      rook.moved = true
-    elsif @color == :black && target == [0,6]
-      rook = @board[[0, 7]]
-      @board[[0,7]] = nil
-      @board[[0,5]] = rook
-      rook.position = [0, 5]
-      rook.moved = true
-    end
+    rook = @board[rook_pos]
+    @board[rook_pos] = nil
+    @board[rook_target] = rook
+    rook.position = rook_target
+    rook.moved = true
   end
 
   def valid_castle?(target)
