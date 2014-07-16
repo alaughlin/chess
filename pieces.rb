@@ -27,6 +27,7 @@ class Piece
 
   def valid_moves
     moves = []
+
     8.times do |x|
       8.times do |y|
         cur_pos = [x, y]

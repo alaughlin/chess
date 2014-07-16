@@ -28,10 +28,11 @@ class Board
     @grid[x][y] = object
   end
 
-  def move(start, target, turn) # gets valid coords from game
+  def move_piece(start, target, turn) # gets valid coords from game
     raise MissingPieceError if self[start].nil?
     raise InvalidMoveError unless self[start].valid_moves.include?(target)
     raise WrongColorError if self[start].color != turn
+
     self[start].move(target)
   end
 
@@ -65,6 +66,7 @@ class Board
 
   def display
     puts "   A  B  C  D  E  F  G  H"
+
     @grid.each_with_index do |row, x|
       print "#{8 - x} "
       row.each_with_index do |piece, y|
@@ -77,15 +79,12 @@ class Board
 
       puts ""
     end
-
-    nil
   end
 
   private
+
   def color_square(row, col, string)
-    if row.even? && col.odd?
-      string.colorize(:background => :cyan)
-    elsif row.odd? && col.even?
+    if (row.even? && col.odd?) || (row.odd? && col.even?)
       string.colorize(:background => :cyan)
     else
       string.colorize(:background => :light_cyan)
@@ -93,43 +92,24 @@ class Board
   end
 
   def generate_grid
+    piece_pos = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
     grid = Array.new(8) { Array.new(8) { nil } }
 
-    grid[0][0] = Rook.new([0, 0], :black, self)
-    grid[0][1] = Knight.new([0, 1], :black, self)
-    grid[0][2] = Bishop.new([0, 2], :black, self)
-    grid[0][3] = Queen.new([0, 3], :black, self)
-    grid[0][4] = King.new([0, 4], :black, self)
-    grid[0][5] = Bishop.new([0, 5], :black, self)
-    grid[0][6] = Knight.new([0, 6], :black, self)
-    grid[0][7] = Rook.new([0, 7], :black, self)
+    0.upto(7) do |y|
+      grid[0][y] = piece_pos[y].new([0, y], :black, self)
+    end
 
-    grid[1][0] = Pawn.new([1, 0], :black, self)
-    grid[1][1] = Pawn.new([1, 1], :black, self)
-    grid[1][2] = Pawn.new([1, 2], :black, self)
-    grid[1][3] = Pawn.new([1, 3], :black, self)
-    grid[1][4] = Pawn.new([1, 4], :black, self)
-    grid[1][5] = Pawn.new([1, 5], :black, self)
-    grid[1][6] = Pawn.new([1, 6], :black, self)
-    grid[1][7] = Pawn.new([1, 7], :black, self)
+    0.upto(7) do |y|
+      grid[1][y] = Pawn.new([1, y], :black, self)
+    end
 
-    grid[6][0] = Pawn.new([6, 0], :white, self)
-    grid[6][1] = Pawn.new([6, 1], :white, self)
-    grid[6][2] = Pawn.new([6, 2], :white, self)
-    grid[6][3] = Pawn.new([6, 3], :white, self)
-    grid[6][4] = Pawn.new([6, 4], :white, self)
-    grid[6][5] = Pawn.new([6, 5], :white, self)
-    grid[6][6] = Pawn.new([6, 6], :white, self)
-    grid[6][7] = Pawn.new([6, 7], :white, self)
+    0.upto(7) do |y|
+      grid[6][y] = Pawn.new([6, y], :white, self)
+    end
 
-    grid[7][0] = Rook.new([7, 0], :white, self)
-    grid[7][1] = Knight.new([7, 1], :white, self)
-    grid[7][2] = Bishop.new([7, 2], :white, self)
-    grid[7][3] = Queen.new([7, 3], :white, self)
-    grid[7][4] = King.new([7, 4], :white, self)
-    grid[7][5] = Bishop.new([7, 5], :white, self)
-    grid[7][6] = Knight.new([7, 6], :white, self)
-    grid[7][7] = Rook.new([7, 7], :white, self)
+    0.upto(7) do |y|
+      grid[7][y] = piece_pos[y].new([7, y], :white, self)
+    end
 
     grid
   end
