@@ -52,10 +52,18 @@ class Board
   end
 
   def checkmate?(color)
+    in_check?(color) && no_legal_moves?(color)
+  end
+
+  def stalemate?
+    [:white, :black].any? { |color| !in_check?(color) && no_legal_moves?(color)}
+  end
+
+  def no_legal_moves?(color)
     pieces = grid.flatten.compact
     our_pieces = pieces.select { |piece| piece.color == color }
 
-    in_check?(color) && our_pieces.none? { |piece| piece.valid_moves.count > 0 }
+    our_pieces.none? { |piece| piece.valid_moves.count > 0 }
   end
 
   def dup
@@ -89,6 +97,10 @@ class Board
 
       puts ""
     end
+  end
+
+  def blank_grid_test
+    @grid = Array.new(8) { Array.new(8) { nil } }
   end
 
   private

@@ -52,13 +52,13 @@ class King < Piece
     return false unless valid_targets.include?(target)
 
     rook_pos, rook_target = castle_helper(target)
-
+    # checking to make sure that helper methods works
     if rook_pos.nil? || rook_target.nil?
       return false
     end
 
     # castle helper determines our positions depending on target
-    return false if @board[rook_pos].moved?
+    return false if @board[rook_pos].nil? || @board[rook_pos].moved?
     # checking if the rook has a valid move; if true, path is empty
     return false unless @board[rook_pos].valid_move?(rook_target, @board) &&
       @board[rook_target].nil?

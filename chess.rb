@@ -35,7 +35,7 @@ class Chess
   end
 
   def play
-    until @board.checkmate?(:black) || @board.checkmate?(:white)
+    until @board.checkmate?(:black) || @board.checkmate?(:white) || @board.stalemate?
       puts "\n#{@turn.to_s.capitalize}'s turn:\n\n"
 
       if @board.in_check?(:black)
@@ -63,9 +63,15 @@ class Chess
       @turn == :white ? @turn = :black : @turn = :white
     end
 
-    winner = @board.checkmate?(:black) ? :white : :black
+    if @board.checkmate?(:black)
+      puts "Black is in checkmate. White wins!"
+    elsif @board.checkmate?(:white)
+      puts "White is in checkmate. Black wins!"
+    else
+      puts "Stalemate. Nobody wins!"
+    end
+
     @board.display
-    puts "#{winner.to_s.capitalize} wins!"
   end
 
   def get_input
