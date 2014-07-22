@@ -14,5 +14,5 @@ Terminal-based Chess game, done in Ruby.
 
 ##todo:
 + en passant
-+ computer a.i.
++ computer a.i. (ha ha ha...)
 + other draw conditions
